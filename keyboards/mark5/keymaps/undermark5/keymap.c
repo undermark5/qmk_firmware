@@ -14,8 +14,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-#include <print.h>
-#include "led.h"
 
 #define NUMLOCK_MASK (1 << USB_LED_NUM_LOCK)
 #define CAPSLOCK_MASK (1 << USB_LED_CAPS_LOCK)
