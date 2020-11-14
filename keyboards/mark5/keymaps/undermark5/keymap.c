@@ -17,6 +17,7 @@
 #include <print.h>
 #include <rgblight.h>
 #include <mousekey.h>
+#include <string.h>
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -130,6 +131,8 @@ void matrix_scan_user(void) {
         tap_code(KC_NLCK);
     //    tap_code(KC_MS_D);x
         move_mouse(rand() % 10000, rand() % 10000);
+        rgblight_sethsv(rgblight_get_hue(), rgblight_get_sat(), 255);
+        rgblight_set_speed(255);
     }
 }
 
@@ -144,7 +147,28 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
+const uint32_t LEDS_COMMAND = 0x7364656c;
+const uint32_t SDEL_COMMAND = 0x6c656473;
+
 void raw_hid_receive(uint8_t *data, uint8_t length) {
+    if (length > 2048) {
+        return;
+    }
+    static uint8_t cmd[4];
+    static uint8_t buf[2048];
+    memcpy(cmd, data, 4);
+    // for (uint8_t i = 0; i < 4; i++) {
+        uprintf("%x\n", *(uint32_t *) cmd);
+        uprintf("%x\n", *(uint32_t *) "leds");
+    // }
+    switch (*(uint32_t *)cmd) {
+    case LEDS_COMMAND:
+        uprintf("LEDS COMMAND\n");
+        break;
+    case SDEL_COMMAND:
+        uprintf("SDEL COMMAND\n");
+        break;
+    }
     for (uint8_t i = 0; i < length; i++) {
         uprintf("%x\n", data[i]);
     }
@@ -152,8 +176,7 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
 
 void keyboard_post_init_user(void) {
 // Customise these values to desired behaviour
-//   debug_enable=true;
-//   debug_matrix=true;
+  debug_enable=true;
     led_t led = host_keyboard_led_state();
     if (!led.num_lock) {
         num_lock_timer = timer_read();
