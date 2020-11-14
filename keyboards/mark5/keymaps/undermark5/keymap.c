@@ -14,13 +14,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 #include QMK_KEYBOARD_H
-
-#define NUMLOCK_MASK (1 << USB_LED_NUM_LOCK)
-#define CAPSLOCK_MASK (1 << USB_LED_CAPS_LOCK)
-#define SCRLLOCK_MASK (1 << USB_LED_SCROLL_LOCK)
-#define COMPOSE_MASK (1 << USB_LED_COMPOSE)
-#define KANA_MASK (1 << USB_LED_KANA)
-
+#include <print.h>
+#include <rgblight.h>
+#include <mousekey.h>
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -30,23 +26,22 @@ enum layer_names {
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
-    KC_00 = SAFE_RANGE,
-    KC_WINLOCK
+    KC_00 = SAFE_RANGE
 };
 
-/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐
-    KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤
-    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤
-         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤
-         KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,
-   ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤
-         KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤
-     KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
-   └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
+/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐ */
+/*  KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*       KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
+/*       KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,           //*/
+/* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*       KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
+/*   KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS            //*/
+/* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -96,9 +91,47 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
      KC_TRNS,    GUI_OFF,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
 /* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
+  ),
+
+  [3] = LAYOUT(
+/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐ */
+    KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
+         KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,           //*/
+/* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+         KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
+     KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS            //*/
+/* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
   )
 };
 
+static uint16_t num_lock_timer;
+static uint16_t elapsed = 0;
+static uint16_t old_elapsed = 0;
+static bool timer_overflow = false;
+void matrix_scan_user(void) {
+    led_t led = host_keyboard_led_state();
+    old_elapsed = elapsed;
+    elapsed = timer_elapsed(num_lock_timer);
+    if (!timer_overflow && elapsed < old_elapsed) {
+        timer_overflow = true;
+    }
+    // uprintf("elapsed: %d  %d\n", elapsed, timer_overflow);
+    if (!led.num_lock && (elapsed > 500 || timer_overflow)) {
+        num_lock_timer = timer_read();
+        timer_overflow = false;
+        elapsed = 0;
+        // uprintf("change numlock\n");
+        tap_code(KC_NLCK);
+    //    tap_code(KC_MS_D);x
+        move_mouse(rand() % 10000, rand() % 10000);
+    }
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -111,18 +144,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-bool led_update_user(led_t led_state) {
-
-    if (!(1 & led_state.raw)) {
-        dprintf("%d\n", !(1 & led_state.raw));
-        register_code(KC_NLCK);
-        unregister_code(KC_NLCK);
+void raw_hid_receive(uint8_t *data, uint8_t length) {
+    for (uint8_t i = 0; i < length; i++) {
+        uprintf("%x\n", data[i]);
     }
-    return true;
 }
 
 void keyboard_post_init_user(void) {
 // Customise these values to desired behaviour
 //   debug_enable=true;
 //   debug_matrix=true;
+    led_t led = host_keyboard_led_state();
+    if (!led.num_lock) {
+        num_lock_timer = timer_read();
+        uprintf("change numlock\n");
+        tap_code(KC_NLCK);
+    }
+    rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL);
 }

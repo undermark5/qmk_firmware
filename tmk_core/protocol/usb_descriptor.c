@@ -105,11 +105,12 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
 #        define SHARED_REPORT_STARTED
 #    endif
     HID_RI_USAGE_PAGE(8, 0x01),            // Generic Desktop
-    HID_RI_USAGE(8, 0x02),                 // Mouse
+    HID_RI_USAGE(8, 0x01),                 // Pointer
     HID_RI_COLLECTION(8, 0x01),            // Application
 #    ifdef MOUSE_SHARED_EP
         HID_RI_REPORT_ID(8, REPORT_ID_MOUSE),
 #    endif
+        HID_RI_USAGE_PAGE(8, 0x01),        // Generic Desktop
         HID_RI_USAGE(8, 0x01),             // Pointer
         HID_RI_COLLECTION(8, 0x00),        // Physical
             // Buttons (5 bits)
@@ -118,6 +119,8 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_USAGE_MAXIMUM(8, 0x05), // Button 5
             HID_RI_LOGICAL_MINIMUM(8, 0x00),
             HID_RI_LOGICAL_MAXIMUM(8, 0x01),
+            HID_RI_PHYSICAL_MINIMUM(8, 0x00),
+            HID_RI_PHYSICAL_MAXIMUM(8, 0x01),
             HID_RI_REPORT_COUNT(8, 0x05),
             HID_RI_REPORT_SIZE(8, 0x01),
             HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
@@ -130,11 +133,13 @@ const USB_Descriptor_HIDReport_Datatype_t PROGMEM SharedReport[] = {
             HID_RI_USAGE_PAGE(8, 0x01),    // Generic Desktop
             HID_RI_USAGE(8, 0x30),         // X
             HID_RI_USAGE(8, 0x31),         // Y
-            HID_RI_LOGICAL_MINIMUM(8, -127),
-            HID_RI_LOGICAL_MAXIMUM(8, 127),
+            HID_RI_LOGICAL_MINIMUM(16, 0),
+            HID_RI_LOGICAL_MAXIMUM(16, 10000),
+            HID_RI_PHYSICAL_MINIMUM(16,0),
+            HID_RI_PHYSICAL_MAXIMUM(16,10000),
             HID_RI_REPORT_COUNT(8, 0x02),
-            HID_RI_REPORT_SIZE(8, 0x08),
-            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_RELATIVE),
+            HID_RI_REPORT_SIZE(8, 0x10),
+            HID_RI_INPUT(8, HID_IOF_DATA | HID_IOF_VARIABLE | HID_IOF_ABSOLUTE),
 
             // Vertical wheel (1 byte)
             HID_RI_USAGE(8, 0x38),         // Wheel
@@ -345,7 +350,7 @@ const USB_Descriptor_Device_t PROGMEM DeviceDescriptor = {
         .Type                   = DTYPE_Device
     },
     .USBSpecification           = VERSION_BCD(1, 1, 0),
-    
+
 #if VIRTSER_ENABLE
     .Class                      = USB_CSCP_IADDeviceClass,
     .SubClass                   = USB_CSCP_IADDeviceSubclass,

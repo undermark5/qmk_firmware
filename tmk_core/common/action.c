@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "action_util.h"
 #include "action.h"
 #include "wait.h"
+#include "print.h"
 
 #ifdef BACKLIGHT_ENABLE
 #    include "backlight.h"
@@ -402,6 +403,7 @@ void process_action(keyrecord_t *record, action_t action) {
         /* Mouse key */
         case ACT_MOUSEKEY:
             if (event.pressed) {
+                uprintf("MOUSEKEY PRESSED");
                 mousekey_on(action.key.code);
                 switch (action.key.code) {
 #    ifdef PS2_MOUSE_ENABLE
@@ -420,6 +422,7 @@ void process_action(keyrecord_t *record, action_t action) {
                         break;
                 }
             } else {
+                uprintf("MOUSEKEY RELEASED");
                 mousekey_off(action.key.code);
                 switch (action.key.code) {
 #    ifdef PS2_MOUSE_ENABLE
@@ -826,6 +829,7 @@ void register_code(uint8_t code) {
 #ifdef MOUSEKEY_ENABLE
     else if
         IS_MOUSEKEY(code) {
+            uprintf("IS MOUSEKEY\n");
             mousekey_on(code);
             mousekey_send();
         }
@@ -890,6 +894,7 @@ void unregister_code(uint8_t code) {
 #ifdef MOUSEKEY_ENABLE
     else if
         IS_MOUSEKEY(code) {
+            uprintf("IS MOUSEKEY OFF\n");
             mousekey_off(code);
             mousekey_send();
         }
@@ -981,6 +986,7 @@ void clear_keyboard_but_mods_and_keys() {
     clear_macro_mods();
     send_keyboard_report();
 #ifdef MOUSEKEY_ENABLE
+    uprintf("MOUSEKEY CLEAR");
     mousekey_clear();
     mousekey_send();
 #endif

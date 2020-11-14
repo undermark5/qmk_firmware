@@ -25,10 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define DEVICE_VER   0x0001
 #define MANUFACTURER Undermark5
 #define PRODUCT      MARK5
+#define SERIAL_NUMBER 0x4578
 
 /* key matrix size */
-#define MATRIX_ROWS 8
-#define MATRIX_COLS 12
+#define MATRIX_ROWS 10
+#define MATRIX_COLS 10
 
 /*
  * Keyboard Matrix Assignments
@@ -40,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
  *
  */
-#define MATRIX_ROW_PINS { A2, A1, A0, B8, B9, B10, B11, B12 }
-#define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A4, A5, A6, A7, A8, A15 }
+#define MATRIX_ROW_PINS { A2, A1, A0, B8, B9, B10, B11, B12, A15, A8 }
+#define MATRIX_COL_PINS { B5, B4, B3, B2, B1, B0, A4, A5, A6, A7 }
 #define UNUSED_PINS
 
 /* COL2ROW, ROW2COL */
@@ -63,23 +64,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WS2812_PWM_PAL_MODE 1  // Pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 2
 #define WS2812_DMA_STREAM STM32_DMA1_STREAM2  // DMA Stream for TIMx_UP, see the respective reference manual for the appropriate values for your MCU.
 #define WS2812_DMA_CHANNEL 2  // DMA Channel for TIMx_UP, see the respective reference manual for the appropriate values for your MCU.
-#    define RGBLED_NUM 96
-#    define RGBLIGHT_HUE_STEP 8
-#    define RGBLIGHT_SAT_STEP 8
-#    define RGBLIGHT_VAL_STEP 8
-#    define RGBLIGHT_LIMIT_VAL 100 /* The maximum brightness level */
+#    define RGBLED_NUM 1
+#    define RGBLIGHT_HUE_STEP 1
+#    define RGBLIGHT_SAT_STEP 1
+#    define RGBLIGHT_VAL_STEP 1
+#    define RGBLIGHT_LIMIT_VAL 255 /* The maximum brightness level */
 // #    define RGBLIGHT_SLEEP  /* If defined, the RGB lighting will be switched off when the host goes to sleep */
 /*== all animations enable ==*/
 //#    define RGBLIGHT_ANIMATIONS
 /*== or choose animations ==*/
-//#    define RGBLIGHT_EFFECT_BREATHING
-//#    define RGBLIGHT_EFFECT_RAINBOW_MOOD
-//#    define RGBLIGHT_EFFECT_RAINBOW_SWIRL
+// #    define RGBLIGHT_EFFECT_BREATHING
+// #    define RGBLIGHT_EFFECT_RAINBOW_MOOD
+#    define RGBLIGHT_EFFECT_RAINBOW_SWIRL
 //#    define RGBLIGHT_EFFECT_SNAKE
 //#    define RGBLIGHT_EFFECT_KNIGHT
 //#    define RGBLIGHT_EFFECT_CHRISTMAS
 //#    define RGBLIGHT_EFFECT_STATIC_GRADIENT
-//#    define RGBLIGHT_EFFECT_RGB_TEST
+// #    define RGBLIGHT_EFFECT_RGB_TEST
 //#    define RGBLIGHT_EFFECT_ALTERNATING
 /*== customize breathing effect ==*/
 /*==== (DEFAULT) use fixed table instead of exp() and sin() ====*/
