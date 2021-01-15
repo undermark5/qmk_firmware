@@ -15,12 +15,6 @@
  */
 #include QMK_KEYBOARD_H
 
-#define NUMLOCK_MASK (1 << USB_LED_NUM_LOCK)
-#define CAPSLOCK_MASK (1 << USB_LED_CAPS_LOCK)
-#define SCRLLOCK_MASK (1 << USB_LED_SCROLL_LOCK)
-#define COMPOSE_MASK (1 << USB_LED_COMPOSE)
-#define KANA_MASK (1 << USB_LED_KANA)
-
 
 // Defines names for use in layer keycodes and the keymap
 enum layer_names {
@@ -30,23 +24,22 @@ enum layer_names {
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
-    KC_00 = SAFE_RANGE,
-    KC_WINLOCK
+    KC_00 = SAFE_RANGE
 };
 
-/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐
-    KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤
-    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤
-         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤
-         KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,
-   ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤
-         KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
-   ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤
-     KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
-   └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
+/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐ */
+/*  KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*       KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
+/*       KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,           //*/
+/* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+/*       KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
+/*   KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS            //*/
+/* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -88,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
 /* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
-         KC_TRNS,  KC_TRNS,   GUI_ON,  KC_TRNS,  RESET,    KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
+         KC_TRNS,   KC_TRNS,  GUI_ON,   KC_TRNS,  RESET,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
 /* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
          KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,
 /* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
@@ -96,8 +89,25 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
      KC_TRNS,    GUI_OFF,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS
 /* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
+  ),
+
+  [3] = LAYOUT(
+/* ┌─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┬─────────┐ */
+    KC_TRNS,            KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,        KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
+    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
+         KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,           //*/
+/* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
+         KC_TRNS,          KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,    KC_TRNS,                    KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,//*/
+/* ├───────────┬─────────┴─┬───────┴───┬─────┴─────────┴─────────┴─────────┴─────────┴─────────┴───────┬─┴─────────┴──┬──────┴───────┬───────────┬─────────┼─────────┼─────────┼─────────┼         ┤ */
+     KC_TRNS,    KC_TRNS,    KC_TRNS,                              KC_TRNS,                               KC_TRNS,         KC_TRNS,    KC_TRNS,   KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS            //*/
+/* └───────────┴───────────┴───────────┴───────────────────────────────────────────────────────────────┴──────────────┴──────────────┴───────────┴─────────┴─────────┴─────────┴─────────┴─────────┘ */
   )
 };
+
 
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -107,16 +117,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 SEND_STRING("00");
             }
             break;
-    }
-    return true;
-}
-
-bool led_update_user(led_t led_state) {
-
-    if (!(1 & led_state.raw)) {
-        dprintf("%d\n", !(1 & led_state.raw));
-        register_code(KC_NLCK);
-        unregister_code(KC_NLCK);
     }
     return true;
 }

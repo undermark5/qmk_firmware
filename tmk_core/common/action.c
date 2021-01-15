@@ -986,7 +986,7 @@ void clear_keyboard_but_mods_and_keys() {
     clear_macro_mods();
     send_keyboard_report();
 #ifdef MOUSEKEY_ENABLE
-    uprintf("MOUSEKEY CLEAR");
+    // uprintf("MOUSEKEY CLEAR");
     mousekey_clear();
     mousekey_send();
 #endif

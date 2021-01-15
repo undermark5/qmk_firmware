@@ -84,7 +84,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 /* ├─────────┼─────────┼─────────┼─────────┼─────────┼─────────┼─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─┴───────┬─┴───────┬─┴─────────┴─────────┼─────────┼─────────┼─────────┼─────────┤ */
     KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,  KC_TRNS,      KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
 /* ├─────────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────┴────┬────────────────┼─────────┼─────────┼─────────┼─────────┤ */
-         KC_TRNS,  KC_TRNS,   GUI_ON,  KC_TRNS,  RESET,    KC_TRNS,  KC_TRNS,   KC_TRNS, KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,   KC_TRNS,
+         KC_TRNS,   KC_TRNS,  GUI_ON,   KC_TRNS,  RESET,    KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,         KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,
 /* ├──────────────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴──┬──────┴────────────────├─────────├─────────├─────────├         ┤ */
          KC_TRNS,      KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS,  KC_TRNS, KC_TRNS,  KC_TRNS,     KC_TRNS,             KC_TRNS,  KC_TRNS,  KC_TRNS,
 /* ├─────────────────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───┬─────┴───────────────────────┼─────────┼─────────┼─────────┼─────────┤ */
@@ -123,17 +123,18 @@ void matrix_scan_user(void) {
         timer_overflow = true;
     }
     // uprintf("elapsed: %d  %d\n", elapsed, timer_overflow);
-    if (!led.num_lock && (elapsed > 500 || timer_overflow)) {
-        num_lock_timer = timer_read();
-        timer_overflow = false;
-        elapsed = 0;
+    // if (!led.num_lock && (elapsed > 500 || timer_overflow)) {
+        // num_lock_timer = timer_read();
+        // timer_overflow = false;
+        // elapsed = 0;
         // uprintf("change numlock\n");
-        tap_code(KC_NLCK);
+        // tap_code(KC_NLCK);
     //    tap_code(KC_MS_D);x
-        move_mouse(rand() % 10000, rand() % 10000);
-        rgblight_sethsv(rgblight_get_hue(), rgblight_get_sat(), 255);
-        rgblight_set_speed(255);
-    }
+        // move_mouse(rand() % 10000, rand() % 10000);
+
+        // rgblight_sethsv(rgblight_get_hue(), rgblight_get_sat(), 100);
+        // rgblight_set_speed(255);
+    // }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -178,10 +179,10 @@ void keyboard_post_init_user(void) {
 // Customise these values to desired behaviour
   debug_enable=true;
     led_t led = host_keyboard_led_state();
-    if (!led.num_lock) {
-        num_lock_timer = timer_read();
-        uprintf("change numlock\n");
-        tap_code(KC_NLCK);
-    }
-    rgblight_mode(RGBLIGHT_MODE_RAINBOW_SWIRL);
+    // if (!led.num_lock) {
+    //     num_lock_timer = timer_read();
+    //     uprintf("change numlock\n");
+    //     tap_code(KC_NLCK);
+    // }
+
 }
