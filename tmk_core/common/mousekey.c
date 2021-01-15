@@ -144,6 +144,9 @@ static uint8_t wheel_unit(void) {
 
 #    endif /* #ifndef MK_COMBINED */
 
+static uint16_t curx = 0;
+static uint16_t cury = 0;
+
 void mousekey_task(void) {
     // report cursor and scroll movement independently
     report_mouse_t const tmpmr = mouse_report;
@@ -192,7 +195,21 @@ void mousekey_task(void) {
     mouse_report = tmpmr;
 }
 
+void move_mouse(int16_t x, int16_t y) {
+    // uprintf("move_mouse\n");
+    curx = x;
+    cury = y;
+    mouse_report.x = 0;
+    mouse_report.y = 0;
+    mousekey_send();
+    mousekey_off(0xF0);
+    mouse_report.x = 0;
+    mouse_report.y = 0;
+    mousekey_send();
+}
+
 void mousekey_on(uint8_t code) {
+    // uprintf("mousekey_on\n");
     if (code == KC_MS_UP)
         mouse_report.y = move_unit() * -1;
     else if (code == KC_MS_DOWN)
@@ -228,6 +245,7 @@ void mousekey_on(uint8_t code) {
 }
 
 void mousekey_off(uint8_t code) {
+    // uprintf("mousekey_off\n");
     if (code == KC_MS_UP && mouse_report.y < 0)
         mouse_report.y = 0;
     else if (code == KC_MS_DOWN && mouse_report.y > 0)
@@ -329,14 +347,16 @@ void adjust_speed(void) {
     }
 }
 
+
+
 void mousekey_on(uint8_t code) {
     uint16_t const c_offset  = c_offsets[mk_speed];
     uint16_t const w_offset  = w_offsets[mk_speed];
     uint8_t const  old_speed = mk_speed;
     if (code == KC_MS_UP)
-        mouse_report.y = c_offset * -1;
+        mouse_report.y += c_offset * -1;
     else if (code == KC_MS_DOWN)
-        mouse_report.y = c_offset;
+        mouse_report.y += c_offset;
     else if (code == KC_MS_LEFT)
         mouse_report.x = c_offset * -1;
     else if (code == KC_MS_RIGHT)
@@ -412,11 +432,23 @@ void mousekey_off(uint8_t code) {
 #endif /* #ifndef MK_3_SPEED */
 
 void mousekey_send(void) {
+    static uint16_t tempx;
+    static uint16_t tempy;
+    tempx = mouse_report.x;
+    tempy = mouse_report.y;
+    curx += mouse_report.x;
+    cury += mouse_report.y;
+    mouse_report.x = curx;
+    mouse_report.y = cury;
     mousekey_debug();
     uint16_t time = timer_read();
-    if (mouse_report.x || mouse_report.y) last_timer_c = time;
+    if (tempx || tempy) {
+        last_timer_c = time;
+    }
     if (mouse_report.v || mouse_report.h) last_timer_w = time;
     host_mouse_send(&mouse_report);
+    mouse_report.x = tempx;
+    mouse_report.y = tempy;
 }
 
 void mousekey_clear(void) {
@@ -428,7 +460,7 @@ void mousekey_clear(void) {
 
 static void mousekey_debug(void) {
     if (!debug_mouse) return;
-    print("mousekey [btn|x y v h](rep/acl): [");
+    print("mousekey [btn|x y v h](rep/acl)(curx, cury): [");
     phex(mouse_report.buttons);
     print("|");
     print_decs(mouse_report.x);
@@ -442,5 +474,6 @@ static void mousekey_debug(void) {
     print_dec(mousekey_repeat);
     print("/");
     print_dec(mousekey_accel);
+    uprintf("(%d,%d)", curx, cury);
     print(")\n");
 }

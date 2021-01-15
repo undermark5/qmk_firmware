@@ -136,6 +136,7 @@ void mousekey_on(uint8_t code);
 void mousekey_off(uint8_t code);
 void mousekey_clear(void);
 void mousekey_send(void);
+void move_mouse(int16_t, int16_t);
 
 #ifdef __cplusplus
 }
