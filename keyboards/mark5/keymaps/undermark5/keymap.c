@@ -112,28 +112,28 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 static uint16_t num_lock_timer;
-static uint16_t elapsed = 0;
-static uint16_t old_elapsed = 0;
-static bool timer_overflow = false;
-void matrix_scan_user(void) {
-    led_t led = host_keyboard_led_state();
+static uint16_t elapsed        = 0;
+static uint16_t old_elapsed    = 0;
+static bool     timer_overflow = false;
+void            matrix_scan_user(void) {
+    led_t led   = host_keyboard_led_state();
     old_elapsed = elapsed;
-    elapsed = timer_elapsed(num_lock_timer);
+    elapsed     = timer_elapsed(num_lock_timer);
     if (!timer_overflow && elapsed < old_elapsed) {
         timer_overflow = true;
     }
     // uprintf("elapsed: %d  %d\n", elapsed, timer_overflow);
     // if (!led.num_lock && (elapsed > 500 || timer_overflow)) {
-        // num_lock_timer = timer_read();
-        // timer_overflow = false;
-        // elapsed = 0;
-        // uprintf("change numlock\n");
-        // tap_code(KC_NLCK);
+    // num_lock_timer = timer_read();
+    // timer_overflow = false;
+    // elapsed = 0;
+    // uprintf("change numlock\n");
+    // tap_code(KC_NLCK);
     //    tap_code(KC_MS_D);x
-        // move_mouse(rand() % 10000, rand() % 10000);
+    // move_mouse(rand() % 10000, rand() % 10000);
 
-        // rgblight_sethsv(rgblight_get_hue(), rgblight_get_sat(), 100);
-        // rgblight_set_speed(255);
+    // rgblight_sethsv(rgblight_get_hue(), rgblight_get_sat(), 100);
+    // rgblight_set_speed(255);
     // }
 }
 
@@ -148,37 +148,107 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     return true;
 }
 
-const uint32_t LEDS_COMMAND = 0x7364656c;
-const uint32_t SDEL_COMMAND = 0x6c656473;
+
+HSV rgbToHsv(RGB rgb) {
+    HSV hsv;
+    unsigned char rgbMin, rgbMax;
+
+    rgbMin = rgb.r < rgb.g ? (rgb.r < rgb.b ? rgb.r : rgb.b) : (rgb.g < rgb.b ? rgb.g : rgb.b);
+    rgbMax = rgb.r > rgb.g ? (rgb.r > rgb.b ? rgb.r : rgb.b) : (rgb.g > rgb.b ? rgb.g : rgb.b);
+
+    hsv.v = rgbMax;
+    if (hsv.v == 0) {
+        hsv.h = 0;
+        hsv.s = 0;
+        return hsv;
+    }
+
+    hsv.s =255 * (uint32_t)(rgbMax - rgbMin) / hsv.v;
+    if (hsv.s == 0) {
+        hsv.h = 0;
+        return hsv;
+    }
+
+    if (rgbMax == rgb.r)
+        hsv.h = 0 + 43 * (rgb.g - rgb.b) / (rgbMax - rgbMin);
+    else if (rgbMax == rgb.g)
+        hsv.h = 85 + 43 * (rgb.b - rgb.r) / (rgbMax - rgbMin);
+    else
+        hsv.h = 171 + 43 * (rgb.r - rgb.g) / (rgbMax - rgbMin);
+
+    return hsv;
+}
+
+const uint32_t LEDS_COMMAND = 0x73;
+const uint32_t SDEL_COMMAND = 0x64;
+
+static uint8_t ledIndex = 0;
+static uint8_t setCommandReceived = 0;
+static uint8_t numLeds = 0;
+
+static uint8_t r = 0;
+static uint8_t g = 0;
+static uint8_t b = 0;
+static uint8_t rgbindex = 0;
 
 void raw_hid_receive(uint8_t *data, uint8_t length) {
-    if (length > 2048) {
+    static uint8_t bufPos = 0;
+    bufPos = 0;
+    if (length < 1) {
         return;
     }
-    static uint8_t cmd[4];
-    static uint8_t buf[2048];
-    memcpy(cmd, data, 4);
-    // for (uint8_t i = 0; i < 4; i++) {
-        uprintf("%x\n", *(uint32_t *) cmd);
-        uprintf("%x\n", *(uint32_t *) "leds");
-    // }
-    switch (*(uint32_t *)cmd) {
-    case LEDS_COMMAND:
-        uprintf("LEDS COMMAND\n");
-        break;
-    case SDEL_COMMAND:
-        uprintf("SDEL COMMAND\n");
-        break;
+    if (!setCommandReceived) {
+        switch (data[bufPos++]) {
+            case LEDS_COMMAND:
+                numLeds = data[bufPos++];
+//                uprintf("NUM LEDS:%d\n\n", numLeds);
+                if (numLeds > RGBLED_NUM) return;
+                setCommandReceived = 1;
+                break;
+            case SDEL_COMMAND:
+                uprintf("SDEL COMMAND\n");
+                break;
+        }
     }
-    for (uint8_t i = 0; i < length; i++) {
-        uprintf("%x\n", data[i]);
+    if (setCommandReceived) {
+        while (bufPos < length && ledIndex < numLeds) {
+            switch (rgbindex) {
+                case 0:
+                    if (bufPos < length) {
+                        r = data[bufPos++];
+                        rgbindex++;
+                    } else
+                        break;
+                case 1:
+                    if (bufPos < length) {
+                        g = data[bufPos++];
+                        rgbindex++;
+                    } else
+                        break;
+                case 2:
+                    if (bufPos < length) {
+                        b = data[bufPos++];
+                        rgbindex = 0;
+                        RGB newColor = {r, g, b};
+                        HSV newHsv = rgbToHsv(newColor);
+                        if (ledIndex < numLeds)
+                            sethsv(newHsv.h, newHsv.s, newHsv.v, (LED_TYPE *) &led[ledIndex++]);
+                    } else
+                        break;
+            }
+        }
+        if (ledIndex == numLeds) {
+            rgblight_set();
+            setCommandReceived = 0;
+            ledIndex = 0;
+        }
     }
 }
 
 void keyboard_post_init_user(void) {
-// Customise these values to desired behaviour
-  debug_enable=true;
-    led_t led = host_keyboard_led_state();
+    // Customise these values to desired behaviour
+    debug_enable = true;
+//    led_t led    = host_keyboard_led_state();
     // if (!led.num_lock) {
     //     num_lock_timer = timer_read();
     //     uprintf("change numlock\n");

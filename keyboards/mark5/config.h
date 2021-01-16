@@ -65,18 +65,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WS2812_PWM_PAL_MODE 1  // Pin "alternate function", see the respective datasheet for the appropriate values for your MCU. default: 2
 #define WS2812_DMA_STREAM STM32_DMA1_STREAM2  // DMA Stream for TIMx_UP, see the respective reference manual for the appropriate values for your MCU.
 #define WS2812_DMA_CHANNEL 2  // DMA Channel for TIMx_UP, see the respective reference manual for the appropriate values for your MCU.
-#    define RGBLED_NUM 96
-#    define RGBLIGHT_HUE_STEP 1
-#    define RGBLIGHT_SAT_STEP 1
-#    define RGBLIGHT_VAL_STEP 1
-#    define RGBLIGHT_LIMIT_VAL 128 /* The maximum brightness level */
+#define RGBLED_NUM 96
+#define RGBLIGHT_HUE_STEP 1
+#define RGBLIGHT_SAT_STEP 1
+#define RGBLIGHT_VAL_STEP 1
+#define RGBLIGHT_LIMIT_VAL 128 /* The maximum brightness level */
 // #    define RGBLIGHT_SLEEP  /* If defined, the RGB lighting will be switched off when the host goes to sleep */
 /*== all animations enable ==*/
 //#    define RGBLIGHT_ANIMATIONS
 /*== or choose animations ==*/
 // #    define RGBLIGHT_EFFECT_BREATHING
 // #    define RGBLIGHT_EFFECT_RAINBOW_MOOD
-#    define RGBLIGHT_EFFECT_RAINBOW_SWIRL
+//#    define RGBLIGHT_EFFECT_RAINBOW_SWIRL
 //#    define RGBLIGHT_EFFECT_SNAKE
 //#    define RGBLIGHT_EFFECT_KNIGHT
 //#    define RGBLIGHT_EFFECT_CHRISTMAS
