@@ -116,12 +116,12 @@ static uint16_t elapsed        = 0;
 static uint16_t old_elapsed    = 0;
 static bool     timer_overflow = false;
 void            matrix_scan_user(void) {
-    led_t led   = host_keyboard_led_state();
+/*    led_t led   = host_keyboard_led_state();
     old_elapsed = elapsed;
     elapsed     = timer_elapsed(num_lock_timer);
     if (!timer_overflow && elapsed < old_elapsed) {
         timer_overflow = true;
-    }
+    }*/
     // uprintf("elapsed: %d  %d\n", elapsed, timer_overflow);
     // if (!led.num_lock && (elapsed > 500 || timer_overflow)) {
     // num_lock_timer = timer_read();
@@ -191,7 +191,7 @@ static uint8_t g = 0;
 static uint8_t b = 0;
 static uint8_t rgbindex = 0;
 
-void raw_hid_receive(uint8_t *data, uint8_t length) {
+/*void raw_hid_receive(uint8_t *data, uint8_t length) {
     static uint8_t bufPos = 0;
     bufPos = 0;
     if (length < 1) {
@@ -243,16 +243,16 @@ void raw_hid_receive(uint8_t *data, uint8_t length) {
             ledIndex = 0;
         }
     }
-}
+}*/
 
 void keyboard_post_init_user(void) {
     // Customise these values to desired behaviour
-    debug_enable = true;
-//    led_t led    = host_keyboard_led_state();
-    // if (!led.num_lock) {
-    //     num_lock_timer = timer_read();
-    //     uprintf("change numlock\n");
-    //     tap_code(KC_NLCK);
-    // }
-
+//    debug_enable = true;
+    /*led_t led    = host_keyboard_led_state();
+     if (!led.num_lock) {
+         num_lock_timer = timer_read();
+         uprintf("change numlock\n");
+         tap_code(KC_NLCK);
+     }*/
+    rgb_matrix_mode(RGB_MATRIX_CYCLE_PINWHEEL);
 }
